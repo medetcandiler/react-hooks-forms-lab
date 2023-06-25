@@ -1,18 +1,44 @@
-import React from "react";
+import { useState } from "react";
 import { v4 as uuid } from "uuid";
 
-function ItemForm(props) {
+function ItemForm({setFiltered}) {
+  const [newItem, setNewItem] = useState({
+    id: uuid(),
+    name: '',
+    category: 'Produce',
+  })
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setNewItem(prev => ({ ...prev, [name]: value }));
+  }
+
+  const onItemFormSubmit = (e) => {
+    e.preventDefault();
+    if (newItem.name && newItem.category) {
+      setFiltered(prev => [...prev, newItem])
+    } else {
+      alert('provide valid value and category')
+    }
+    setNewItem({
+      id: uuid(),
+      name: '',
+      category: '',
+    })
+  }
+
   return (
-    <form className="NewItem">
+    <form onSubmit={onItemFormSubmit} className="NewItem">
       <label>
         Name:
-        <input type="text" name="name" />
+        <input type="text" onChange={handleChange} name="name" value={newItem.name} />
       </label>
 
       <label>
         Category:
-        <select name="category">
-          <option value="Produce">Produce</option>
+        <select onChange={handleChange} value={newItem.category} name="category">
+          <option defaultValue="Produce">Produce</option>
           <option value="Dairy">Dairy</option>
           <option value="Dessert">Dessert</option>
         </select>
